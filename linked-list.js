@@ -169,7 +169,22 @@ class LinkedList {
       currNode = currNode.next;
     }
     return total/this.length;
+  }
 
+  reverseInPlace() {
+    let prevNode = null;
+    let currNode = this.head;
+    
+    for(let i = 0; i < this.length; i++){
+      const oldNextNode = currNode.next;
+
+      currNode.next = prevNode;
+      prevNode = currNode;
+      currNode = oldNextNode;
+    }
+    const headNode = this.tail;
+    this.tail = this.head;
+    this.head = headNode;
   }
 }
 
