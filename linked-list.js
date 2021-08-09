@@ -17,8 +17,10 @@ class LinkedList {
 
     for (let val of vals) this.push(val);
   }
+
+  emptyListError = () => Error("List Is Empty!");
   
-  emptyList() {
+  isEmpty() {
     return !this.head;
   }
 
@@ -26,7 +28,7 @@ class LinkedList {
 
   push(val) {
     const node = new Node(val);
-    if(this.emptyList()){
+    if(this.isEmpty()){
       //no list yet
       this.head = this.tail = node;
       this.length = 1;
@@ -42,7 +44,7 @@ class LinkedList {
 
   unshift(val) {
     const node = new Node(val);
-    if(this.emptyList()){
+    if(this.isEmpty()){
       //no list yet
       this.head = this.tail = node;
       this.length = 1;
@@ -57,26 +59,43 @@ class LinkedList {
 
   pop() {
     let currNode = this.head;
-    if(currNode === this.tail) {
+    let val;
+    if(this.isEmpty()){
+      throw this.emptyListError();
+    }
+    else if(currNode === this.tail) {
       //1 item list
-      return currNode.val;
+      val = currNode.val;
+      this.head = this.tail = null;
+    }else {
+      while(currNode.next.next !== null){
+        currNode = currNode.next;
+      }
+      //currNode.next is the last node
+      val = currNode.next.val;
+      this.tail = currNode;
+      this.tail.next = null;
     }
-    
-    while(currNode.next.next !== null){
-      currNode = currNode.next;
-    }
-    //currNode.next is the last node
-    const poppedVal = currNode.next.val;
-    this.tail = currNode;
-    this.tail.next = null;
     this.length--;
-    return poppedVal;
+    return val;
   }
 
   /** shift(): return & remove first item. */
 
   shift() {
-
+    let val;
+    if(this.isEmpty()){
+      throw this.emptyListError();
+    } else if(this.head.next === null) {
+      val = this.head.val;
+      this.head = this.tail = null;
+      
+    } else {
+      val = this.head.val;
+      this.head = this.head.next;
+    }
+    this.length--;
+    return val;
   }
 
   /** getAt(idx): get val at idx. */
