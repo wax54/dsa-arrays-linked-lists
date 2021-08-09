@@ -18,7 +18,8 @@ class LinkedList {
     for (let val of vals) this.push(val);
   }
 
-  emptyListError = () => Error("List Is Empty!");
+  static emptyListError = () => Error("List Is Empty!");
+  static indexError = () => Error("Index Out of range!");
   
   isEmpty() {
     return !this.head;
@@ -61,7 +62,7 @@ class LinkedList {
     let currNode = this.head;
     let val;
     if(this.isEmpty()){
-      throw this.emptyListError();
+      throw LinkedList.emptyListError();
     }
     else if(currNode === this.tail) {
       //1 item list
@@ -85,7 +86,7 @@ class LinkedList {
   shift() {
     let val;
     if(this.isEmpty()){
-      throw this.emptyListError();
+      throw LinkedList.emptyListError();
     } else if(this.head.next === null) {
       val = this.head.val;
       this.head = this.tail = null;
@@ -98,38 +99,77 @@ class LinkedList {
     return val;
   }
 
+  getNodeAt(idx) {
+    let currNode = this.head;
+    for (let i = 0; i < idx; i++) {
+      currNode = currNode.next;
+      if (currNode === null) {
+        throw LinkedList.indexError();
+      }
+    }
+    return currNode
+  }
   /** getAt(idx): get val at idx. */
 
   getAt(idx) {
-    let currNode = this.head;
-    for(let i = 0; i < idx; i++){
-      currNode = currNode.next;
-    }
-    return currNode.val;
+    return this.getNodeAt(idx).val;
   }
 
   /** setAt(idx, val): set val at idx to val */
 
   setAt(idx, val) {
-
+    const node = this.getNodeAt(idx);
+    node.val = val;
   }
 
   /** insertAt(idx, val): add node w/val before idx. */
 
   insertAt(idx, val) {
-
+    if(idx === 0 || this.isEmpty()) {
+      this.unshift(val);
+    } else {
+      const insertedNode = new Node(val);
+      const nodeBefore = this.getNodeAt(idx - 1);
+      const nodeAfter = nodeBefore.next;
+      nodeBefore.next = insertedNode;
+      insertedNode.next = nodeAfter;
+      if(insertedNode.next === null){
+        this.tail = insertedNode;
+      }
+      this.length++;
+    }
   }
 
   /** removeAt(idx): return & remove item at idx, */
 
   removeAt(idx) {
-
+    if(idx === 0){
+      return this.shift();
+    } else if(idx === this.length){
+      throw LinkedList.indexError();
+    } else {
+      const nodeBefore = this.getNodeAt(idx - 1);
+      const val = nodeBefore.next.val;
+      const nodeAfter = nodeBefore.next.next;
+      nodeBefore.next = nodeAfter;
+      if(nodeBefore.next === null) this.tail = nodeBefore;
+      this.length--;
+      return val;
+    }
   }
 
   /** average(): return an average of all values in the list */
 
   average() {
-    
+    if(this.length === 0) return 0;
+    let total = 0;
+    let currNode = this.head;
+    while(currNode){
+      total += currNode.val;
+      currNode = currNode.next;
+    }
+    return total/this.length;
+
   }
 }
 
